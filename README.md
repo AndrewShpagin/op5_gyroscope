@@ -6,7 +6,8 @@ https://www.dfrobot.com/product-2200.html
 <img src = "https://github.com/DFRobot/DFRobot_WT61PC/blob/master/resources/images/WT61PC.png">
 
 The repository uses the sources for Arduino: https://github.com/DFRobot/DFRobot_WT61PC
-We just adopted it to Orange PI.
+
+We just re-implemented it for the Orange PI.
 
 Steps to start:
 
