@@ -1,9 +1,13 @@
 # op5_gyroscope
 ## Reading the data from the DFRobot_WT61PC gyroscope using the Orange PI5
-
-https://www.dfrobot.com/product-2200.html
+### Requirements:
+1) https://www.dfrobot.com/product-2200.html
 
 <img src = "https://github.com/DFRobot/DFRobot_WT61PC/blob/master/resources/images/WT61PC.png">
+
+2) Orange PI 5 (plus)
+
+<img src = "http://www.orangepi.org/img/pi5-plus/pi5-plus-5.png">
 
 The repository uses the sources for Arduino: https://github.com/DFRobot/DFRobot_WT61PC
 
