@@ -14,7 +14,7 @@ int main() {
     }
 
     DFRobot_WT61PC sensor(&FPSerial);
-    sensor.modifyFrequency(FREQUENCY_10HZ);
+    sensor.modifyFrequency(FREQUENCY_100HZ);
 
     do{
         if (sensor.available()) {
