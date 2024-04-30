@@ -46,9 +46,9 @@ Now, clone the repo, run and enjoy!
 The output looks like:
 
 ```
-Acc:   313.53   313.34    10.04
+Acc:    -0.01     0.05    10.05
 
 Gyro:     0.00     0.00     0.00
 
-Angle:   358.64     0.42     2.81
+Angle:     0.13     0.05   165.89
 ```
