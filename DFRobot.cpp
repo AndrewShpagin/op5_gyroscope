@@ -92,23 +92,23 @@ bool DFRobot_WT61PC::available(void)
 
 void DFRobot_WT61PC::getAcc(uint8_t *buf)
 {
-  Acc.X = ((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 16.000 * 9.8;
-  Acc.Y = ((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 16.000 * 9.8;
-  Acc.Z = ((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 16.000 * 9.8;
+  Acc.X = short((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 16.000 * 9.8;
+  Acc.Y = short((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 16.000 * 9.8;
+  Acc.Z = short((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 16.000 * 9.8;
 }
 
 void DFRobot_WT61PC::getGyro(uint8_t *buf)
 {
-  Gyro.X = ((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 2000.000;
-  Gyro.Y = ((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 2000.000;
-  Gyro.Z = ((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 2000.000;
+  Gyro.X = short((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 2000.000;
+  Gyro.Y = short((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 2000.000;
+  Gyro.Z = short((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 2000.000;
 }
 
 void DFRobot_WT61PC::getAngle(uint8_t *buf)
 {
-  Angle.X = ((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 180.000;
-  Angle.Y = ((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 180.000;
-  Angle.Z = ((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 180.000;
+  Angle.X = short((buf[WT61PC_XH] << 8) | buf[WT61PC_XL]) / 32768.000 * 180.000;
+  Angle.Y = short((buf[WT61PC_YH] << 8) | buf[WT61PC_YL]) / 32768.000 * 180.000;
+  Angle.Z = short((buf[WT61PC_ZH] << 8) | buf[WT61PC_ZL]) / 32768.000 * 180.000;
 }
 
 
