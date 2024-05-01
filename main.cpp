@@ -2,27 +2,28 @@
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
+#include <math.h>
 
-#include "DFRobot.h"
+#include "gyro.h"
 
 int main() {
+    void visual_axis_test();
+    visual_axis_test();
+    return 0;
 
-    opSerial FPSerial("/dev/ttyS1", 9600);
-    if(FPSerial.error()) {
+    Gyro gyro("/dev/ttyS1", 9600); 
+    if(!gyro.valid()) {
         printf("Sensor not available\n");
         return 0;
     }
-
-    DFRobot_WT61PC sensor(&FPSerial);
-    sensor.modifyFrequency(FREQUENCY_50HZ);
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    gyro.startLocalTransform();
     do{
-        if (sensor.available()) {
-            std::cout << "\033[2J\033[H";
-            printf("Acc: %8.02f %8.02f %8.02f\n\n", sensor.Acc.X, sensor.Acc.Y, sensor.Acc.Z);
-            printf("Gyro: %8.02f %8.02f %8.02f\n\n", sensor.Gyro.X, sensor.Gyro.Y, sensor.Gyro.Z);
-            printf("Angle: %8.02f %8.02f %8.02f\n\n", sensor.Angle.X, sensor.Angle.Y, sensor.Angle.Z);
-        }
-    } while(true);
+        std::cout << "\033[2J\033[H";
+        //gyro.print();
+        gyro.print();
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    } while(true); 
     return 0;
+    
 }

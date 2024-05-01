@@ -99,7 +99,7 @@ private:
   uint8_t receivedGyroData[11];    //Store the angular velocity original data packet of x, y, and z 
   uint8_t receivedAngleData[11];   //Store the angle original data packet of x, y and z 
 
-  uint8_t Cmd[5] = {0xff, 0xaa, 0x03, FREQUENCY_10HZ, 0x00};   //Revise the command of sensor output data frequency 
+  uint8_t Cmd[5] = {0xff, 0xaa, 0x03, FREQUENCY_100HZ, 0x00};   //Revise the command of sensor output data frequency 
 
 private:
   /**

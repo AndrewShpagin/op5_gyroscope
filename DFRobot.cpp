@@ -116,5 +116,4 @@ void DFRobot_WT61PC::modifyFrequency(uint8_t frequency)
 {
   Cmd[3] = frequency;
   _s->write(Cmd);
-
 }
