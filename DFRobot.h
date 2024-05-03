@@ -11,6 +11,7 @@
 #ifndef __DFRobot_WT61PC_H__
 #define __DFRobot_WT61PC_H__
 
+#include "gyro_base.h"
 #include "opSerial.h"
 typedef opSerial Stream;
 
@@ -22,7 +23,7 @@ typedef opSerial Stream;
 #endif
 
 
-class DFRobot_WT61PC
+class DFRobot_WT61PC : public BaseGyroscope
 {
 public:
 #define  FREQUENCY_0_1HZ   0X01
@@ -58,7 +59,7 @@ public:
    * @param Stream Software serial port interface 
    * @return None
    */
-  DFRobot_WT61PC(Stream *s);
+  DFRobot_WT61PC(Stream *s = nullptr);
 
   /**
    * @fn available
@@ -151,6 +152,42 @@ private:
    * @return None
    */
   void getAngle(uint8_t *buf);
+
+  opSerial* FPSerial;
+
+public:
+  // BaseGyroscope overrides
+
+  virtual bool start_gyro(unsigned degrees_per_second) override {
+    FPSerial = new opSerial("/dev/ttyS1", 9600);
+    if(FPSerial->error()){
+      printf("Sensor not available\n");
+      return false;
+    }
+    _s = FPSerial;
+    return true;
+  }
+
+  virtual bool collect(float3& accel, float3& gyro, float3& euler, float3& mag) override {
+    if(available()){
+      float rad = M_PI / 180.0f;
+
+      accel.x = Acc.X;
+      accel.y = Acc.Y;
+      accel.z = Acc.Z;
+      
+      gyro.x = Gyro.X;
+      gyro.y = Gyro.Y;
+      gyro.z = Gyro.Z;
+      
+      euler.x = Angle.X;
+      euler.y = Angle.Y;
+      euler.z = Angle.Z;
+
+      return true;
+    }
+    return false;
+  }
 };
 
 #endif

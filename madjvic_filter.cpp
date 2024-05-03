@@ -3,9 +3,9 @@
 #include "madjvic_filter.h"
 
 // System constants
-#define deltat 0.001f // sampling period in seconds (shown as 1 ms)
-#define gyroMeasError 3.14159265358979f * (5.0f / 180.0f) // gyroscope measurement error in rad/s (shown as 5 deg/s)
-#define beta sqrt(3.0f / 4.0f) * gyroMeasError // compute beta
+const float gyro_error_per_sec = 3.0f; // gyroscope measurement error in degrees/s
+const float gyroMeasError = M_PI * (gyro_error_per_sec / 180.0f); // gyroscope measurement error in rad/s
+const float beta = sqrt(3.0f / 4.0f) * gyroMeasError; // compute beta
 
 void madjvic_filter::update(float w_x, float w_y, float w_z, float a_x, float a_y, float a_z, float dt)
 {
