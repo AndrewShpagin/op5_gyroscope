@@ -11,6 +11,8 @@ PoiTracker::PoiTracker(int width, int height, BaseGyroscope *gyro)
     _hasPointOfInterest = false;
     _pointOfInterest = make_float2(0, 0);
     _pointOfInterestRadius = 0;
+    _feature_tracking_radius = 0;
+    _stop = false;
     for(int i=0;i<MAX_TRACK_FRAMES;i++){
         frames[i] = new TrackFrame();
     }
@@ -19,27 +21,48 @@ PoiTracker::PoiTracker(int width, int height, BaseGyroscope *gyro)
         std::cerr << "Error: Unable to open the camera" << std::endl;
         return;
     }
-
     cap->set(cv::CAP_PROP_FRAME_WIDTH, width);
     cap->set(cv::CAP_PROP_FRAME_HEIGHT, height);
     cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+    _thread = nullptr;
+    _finish = true;
+    _stop = false;
 }
 
 PoiTracker::~PoiTracker()
 {
+    if(_thread){
+        _stop = true;
+        _thread->join();
+        delete _thread;
+    }
     for(int i=0;i<MAX_TRACK_FRAMES;i++){
         delete frames[i];
     }
     delete cap;
 }
 
+bool PoiTracker::start()
+{
+    _stop = false;
+    _finish = false;
+    _thread = new std::thread([this](){
+        while(!_stop){
+            addFrame();
+        }
+        _finish = true;
+    });
+    return false;
+}
+
 TrackFrame *PoiTracker::addFrame()
 {
-    last_track_position++;
-    if(last_track_position >= MAX_TRACK_FRAMES){
-        last_track_position = 0;
+    int tpos = last_track_position;
+    tpos++;
+    if(tpos >= MAX_TRACK_FRAMES){
+        tpos = 0;
     }
-    int F = last_track_position;
+    int F = tpos;
     auto* tr = frames[F];
     tr->time = utils::now();
     tr->_cam_forward = _cam_forward;
@@ -65,6 +88,9 @@ TrackFrame *PoiTracker::addFrame()
         tr->pointOfInterest = _pointOfInterest;
         tr->pointOfInterestRadius = _pointOfInterestRadius;
     }
+    _m.lock();
+    last_track_position = tpos;
+    _m.unlock();
     return tr;
 }
 
@@ -73,7 +99,11 @@ TrackFrame *PoiTracker::getFrame(int i)
     if(i>=MAX_TRACK_FRAMES){
         return nullptr;
     }
-    int idx = (last_track_position + MAX_TRACK_FRAMES - i) % MAX_TRACK_FRAMES;
+    int fidx;
+    _m.lock();
+    fidx = last_track_position;
+    _m.unlock();
+    int idx = (fidx + MAX_TRACK_FRAMES - i) % MAX_TRACK_FRAMES;
     auto* f = frames[idx];
     if(f->image.empty()){
         return nullptr;
@@ -83,9 +113,9 @@ TrackFrame *PoiTracker::getFrame(int i)
 
 void PoiTracker::draw()
 {
-    int F = last_track_position;
-    auto* tr = frames[F];
-    if(tr->image.empty()){
+    auto* tr = getFrame(0);
+
+    if(!tr || tr->image.empty()){
         return;
     }
     if(tr->hasPointOfInterest){
@@ -109,6 +139,14 @@ void PoiTracker::setPointOfInterest(float2 poi, float radius)
     _pointOfInterestRadius = radius;
 }
 
+void PoiTracker::enableFeaturesTracking(bool enable, float radius)
+{
+    if(!_hasPointOfInterest){
+        setPointOfInterest(make_float2(_width/2, _height/2), radius/ 2);
+    }
+    _feature_tracking_radius = radius;
+}
+
 float3 PoiTracker::cam2gyro(float3 cam)
 {
     float3 r = _cam_right;
@@ -127,10 +165,20 @@ float3 PoiTracker::gyro2cam(float3 gyro)
 
 float3 PoiTracker::image2cam(float x, float y)
 {
-    return make_float3(_pointOfInterest.x / _width - 0.5f, 0.5f - _pointOfInterest.y / _width, 1);
+    return make_float3(_pointOfInterest.x / _width - 0.5f, 0.5f - _pointOfInterest.y / _width, 0.5);
 }
 
 float2 PoiTracker::cam2image(float3 cam)
 {
     return make_float2((cam.x + 0.5) * _width, (0.5f - cam.y) * _width);
+}
+
+float PoiTracker::video_fps()
+{
+    auto* f0 = getFrame(0);
+    auto* f1 = getFrame(16);
+    if(f0 && f1){
+        return 16000.0f / f0->passed_ms(f1);
+    }
+    return 0;
 }
