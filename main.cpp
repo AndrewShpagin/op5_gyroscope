@@ -7,6 +7,7 @@
 //#include "gyro.h"
 #include "mpu9250.h"
 #include "DFRobot.h"
+#include "tracker.h"
 
 int main() {
     mpu9250 gy;
@@ -15,14 +16,24 @@ int main() {
         printf("Sensor not available\n");
         return 0;
     }
+    PoiTracker T(640, 480, &gy);
+    T.setCameraDirectionInGyroSpace(float3(-1, 0, 0), float3(0, -1, 0));
+    T.setPointOfInterest(float2(100,100),30);
+    gy.startLocalTransform();
+    do{
+        T.addFrame();
+        T.draw();
+        //gy.drawAxis();
+    } while(true);
 
+    /*
     do{
         /// clear the screen
         printf("\033[2J\033[H");
         gy.print();
-        //printf("Gyro: %8.03f %8.03f %8.03f\n", g.x, g.y, g.z);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     } while(gy.drawAxis());
+    */
 
     return 0;
     /*

@@ -9,6 +9,7 @@
 #include "quat.h"
 #include <thread>
 #include <chrono>
+#include "utils.h"
 #include "cuproxy.h"
 #include "madjvic_filter.h"
 #include <opencv2/opencv.hpp>
@@ -28,7 +29,7 @@ protected:
     madjvic_filter madjvic;
     mat3 _transform;
     mat3 _localTransform;
-    std::chrono::time_point<std::chrono::system_clock> last_time;
+    utils::time_point last_time;
     std::thread* _thread;
     bool _stop;
     bool _finish;

@@ -60,7 +60,7 @@ float BaseGyroscope::passed_Ms()
 
 bool BaseGyroscope::calibrate()
 {
-    const int n_read = 50;
+    const int n_read = 150;
     float3 measurements[n_read];
     int pos=0;
     memset(measurements, 0, sizeof(measurements));
@@ -207,7 +207,7 @@ bool BaseGyroscope::drawAxis()
     }
     if(image) {
         image->setTo(cv::Scalar(0, 0, 0));
-        mat3 t = transform();
+        mat3 t = localTransform();
         float3 x = make_float3(1, 0, 0);
         float3 y = make_float3(0, 1, 0);
         float3 z = make_float3(0, 0, 1);
